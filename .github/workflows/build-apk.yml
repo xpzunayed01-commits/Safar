@@ -50,19 +50,27 @@ jobs:
         run: |
           npm run build
 
-      - name: Initialize & Add Capacitor Android Project
+      - name: Initialize & Add Capacitor Android Platform
         run: |
           npx cap add android || true
-          npx cap sync android
+          npx cap update android
 
-      - name: Grant Execute Permission to Gradlew
+      - name: Grant Execute Permission to Gradlew (Safe Check)
         run: |
-          chmod +x android/gradlew
+          if [ -f "android/gradlew" ]; then
+            chmod +x android/gradlew
+          else
+            echo "gradlew not found, skipping chmod"
+          fi
 
       - name: Build Android Release & Debug APK
         working-directory: android
         run: |
-          ./gradlew assembleRelease --no-daemon --stacktrace || ./gradlew assembleDebug --no-daemon --stacktrace
+          if [ -f "./gradlew" ]; then
+            ./gradlew assembleRelease --no-daemon --stacktrace || ./gradlew assembleDebug --no-daemon --stacktrace
+          else
+            echo "Gradlew not found in android directory!" && exit 1
+          fi
 
       - name: Prepare APK Outputs
         run: |
