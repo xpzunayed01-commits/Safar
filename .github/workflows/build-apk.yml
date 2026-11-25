@@ -54,23 +54,22 @@ jobs:
         run: |
           npx cap add android || true
           npx cap update android
+          npx cap sync android
 
-      - name: Grant Execute Permission to Gradlew (Safe Check)
+      - name: Verify Android Directory & Gradlew
         run: |
+          ls -la android
           if [ -f "android/gradlew" ]; then
             chmod +x android/gradlew
           else
-            echo "gradlew not found, skipping chmod"
+            echo "ERROR: android/gradlew still missing after cap sync!"
+            exit 1
           fi
 
       - name: Build Android Release & Debug APK
-        working-directory: android
         run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew assembleRelease --no-daemon --stacktrace || ./gradlew assembleDebug --no-daemon --stacktrace
-          else
-            echo "Gradlew not found in android directory!" && exit 1
-          fi
+          cd android
+          ./gradlew assembleRelease --no-daemon --stacktrace || ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Prepare APK Outputs
         run: |
