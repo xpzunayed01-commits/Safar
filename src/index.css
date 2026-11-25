@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Ador Noirrit';
+  src:
+    local('Li Ador Noirrit'),
+    local('Li Ador Noirrit Regular'),
+    local('LiAdorNoirrit'),
+    local('Ador Noirrit'),
+    local('আদর নৈর্ঋত');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Ador Noirrit';
+  src:
+    local('Li Ador Noirrit SemiBold'),
+    local('Li Ador Noirrit Bold'),
+    local('LiAdorNoirrit-Bold'),
+    local('Ador Noirrit Bold'),
+    local('আদর নৈর্ঋত');
+  font-weight: 600 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --font-sans: 'Ador Noirrit', 'Li Ador Noirrit', 'Hind Siliguri', 'Noto Sans Bengali', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-arabic: 'Amiri', 'Traditional Arabic', serif;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #f6f8f5;
+    color: #141517;
+    overflow-x: hidden;
+    min-height: 100dvh;
+    overscroll-behavior-y: contain;
+  }
+}
+
+.font-arabic {
+  font-family: var(--font-arabic);
+  line-height: 2.1;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Segmented progress bar vertical ticks from Reference Image A */
+.segmented-bar-track {
+  display: grid;
+  grid-template-columns: repeat(36, minmax(0, 1fr));
+  gap: 2.5px;
+}
+
+/* Hide scrollbars cleanly for horizontal date strips */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

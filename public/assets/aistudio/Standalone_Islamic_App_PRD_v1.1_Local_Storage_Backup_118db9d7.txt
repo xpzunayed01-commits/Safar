@@ -1,0 +1,280 @@
+PRODUCT REQUIREMENTS DOCUMENT (PRD) নতুন স্বতন্ত্র অ্যাপ — Reference-based
+Islamic Daily Planner & Companion Version: 1.0 Platform: Android-first,
+responsive mobile app Build environment: Google AI Studio App name: এখনো
+নির্ধারিত নয় (কোডে সহজে পরিবর্তনযোগ্য)
+
+============================================================ 1. PROJECT
+SCOPE ও গুরুত্বপূর্ণ নির্দেশনা
+============================================================
+
+এটি Fixness Fitness App নয়। এটি সম্পূর্ণ আলাদা একটি নতুন অ্যাপ। Fixness,
+Fitness, Workout, Exercise, Gym, Body Tracking বা Fitness-সংক্রান্ত কোনো
+ফিচার, নাম, লেখা, আইকন, ডেটা বা ডিজাইন এই প্রজেক্টে যোগ করা যাবে না।
+
+ব্যবহারকারী Google AI Studio-তে এই PRD-এর সঙ্গে দেওয়া সব Reference Image
+আপলোড করবেন। সেই ছবিগুলোই UI/UX-এর প্রধান ও বাধ্যতামূলক ডিজাইন রেফারেন্স।
+
+মূল লক্ষ্য: - Reference Image-গুলোর দৃশ্যমান UI যতটা সম্ভব pixel-close ভাবে
+পুনর্নির্মাণ করা। - Layout, component placement, card shape, spacing,
+typography hierarchy, color palette, gradients, shadows, icons,
+navigation এবং visual proportions অকারণে পরিবর্তন করা যাবে না। - নিজের
+মতো নতুন UI concept বা unrelated screen বানানো যাবে না। - কোনো AI
+Assistant, AI Chatbot, AI Coach বা AI-generated advice feature থাকবে
+না। - অ্যাপটি হবে একটি Islamic daily companion: prayer times, Quran
+access, daily tasks/habits, reminders, streaks, statistics, profile এবং
+achievements। - শুধু static design নয়; সব দৃশ্যমান control বাস্তবে কাজ করতে
+হবে।
+
+গুরুত্বপূর্ণ: Reference image-এ থাকা ব্যক্তির নাম, তারিখ, পরিসংখ্যান বা location
+হলো ডেমো কনটেন্ট। সেগুলো হুবহু স্থায়ী ডেটা হিসেবে ব্যবহার করা যাবে না। বাস্তব
+ব্যবহারকারীর ডেটা অনুযায়ী UI আপডেট হবে।
+
+============================================================ 2. DESIGN
+REFERENCE MAPPING
+============================================================
+
+Reference Image A — Today’s Task widget: - উষ্ণ হলুদ/কমলা gradient
+background। - Rounded translucent task panel। - উপরে ছোট checklist/task
+chips। - বড় “Today’s Task” heading। - Add (+) action। - Progress
+percentage এবং segmented progress bar। প্রয়োগ: Home/Daily Tasks section।
+
+Reference Image B — Week Streak & Stats: - সাদা, clean mobile
+interface। - বড় streak number ও flame icon। - সপ্তাহের দিনগুলোর progress
+indicator। - Days, Lessons, Quizzes, Minutes ধরনের compact stat cards। -
+Insight badge। প্রয়োগ: Activity/Streak/Statistics screen। Islamic app-এ
+উপযুক্ত পরিসংখ্যান হিসেবে Completed Tasks, Quran Sessions, Prayer
+Check-ins, Learning Minutes ব্যবহার করা যাবে। Fitness বা workout metrics
+নয়।
+
+Reference Image C — Profile: - হালকা background ও subtle green glow। -
+বড় Profile heading। - User profile card। - Compact stat cards। -
+Baseline/details list। - Milestones section এবং bottom navigation।
+প্রয়োগ: Profile screen। এখানে নাম, account info, activity summary,
+preferences ও achievement milestones থাকবে। Reference-এর HRV, readiness,
+sleep need বা load ceiling-এর মতো fitness/health metrics ব্যবহার করা যাবে
+না।
+
+Reference Image D — Ramadan Home + Prayer Time: - সবুজ/ডার্ক-গ্রিন এবং
+lime/yellow background palette। - Greeting ও location selector। -
+Circular content/story shortcuts। - Ramadan feature banner। -
+Community-style content card pattern। - Prayer Time screen-এ বড়
+circular/arc time visualization। - Fajr, Dhuhr, Asr, Maghrib, Isha
+তালিকা। প্রয়োগ: Home এবং Prayer Times screen। Location ও prayer time
+বাস্তব calculation/API source থেকে নিতে হবে; demo time-কে live data
+হিসেবে দেখানো যাবে না।
+
+Reference Image E — Arabic Daily Planner: - White mobile cards। - Date
+header ও horizontal day selector। - বিভিন্ন রঙের task cards। - Add (+)
+button। - Simple login/signup screen। প্রয়োগ: Daily Planner, Calendar,
+Task creation এবং Authentication screens। আরবি ভাষার layout inspiration
+হিসেবে থাকবে; অ্যাপে Bangla/English/Arabic ভাষা সমর্থনের সুযোগ রাখা যেতে
+পারে, তবে অপ্রয়োজনীয় content যোগ করা যাবে না।
+
+Reference Image F — Deen Muslim / Quran: - Warm cream/off-white
+background। - Soft golden/orange banner ও Islamic silhouette motif। -
+Prayer/time information। - Quran list screen: Surah name, number, ayah
+count। - Reminder, Memorize, Ruqyah, Dua Q&A, Books, Donate shortcut
+style। প্রয়োগ: Home shortcuts ও Quran screen। Quran content সঠিক ও
+নির্ভরযোগ্য উৎস থেকে আনতে হবে। ভুল Arabic text বা fabricated translation
+ব্যবহার করা যাবে না।
+
+Reference Image G — Achievement Badges: - Combo badges: 10, 20, 30, 50,
+100। - Colorful hexagon badges। - Bronze, Silver, Gold medal style। -
+Ribbon/Approved style badges। প্রয়োগ: Achievement & Rewards screen। Badge
+unlock conditions স্পষ্ট, বাস্তব এবং app activity-র সঙ্গে সম্পর্কিত হবে।
+
+============================================================ 3. APP
+STRUCTURE / NAVIGATION
+============================================================
+
+Primary bottom navigation (reference অনুযায়ী): 1. Home 2. Planner / Tasks
+3. Quran 4. Profile
+
+Prayer Times এবং Achievements Home shortcuts, dedicated screens অথবা
+Profile-এর sub-sections থেকে access করা যাবে। Reference-এর visual
+hierarchy অক্ষুণ্ণ রেখে navigation সহজ রাখতে হবে।
+
+Required screens: - Splash / App launch - Onboarding (সংক্ষিপ্ত) - Sign
+up - Login - Home dashboard - Prayer Times - Daily Planner / Calendar -
+Add/Edit Task - Quran library / Surah list - Surah reading screen -
+Activity / Streak / Statistics - Achievements / Badges - Profile -
+Settings
+
+============================================================ 4. FEATURE
+REQUIREMENTS
+============================================================
+
+4.1 Home Dashboard - Greeting: “Assalamu Alaikum” বা user-selected
+language equivalent। - Current city/location দেখাবে; user location
+permission না দিলে manual city select। - Prayer time summary এবং next
+prayer information। - Quran shortcut। - Daily task progress card। -
+Daily reminders / Islamic shortcuts। - Ramadan banner বা seasonal
+content slot; Ramadan না হলে অপ্রাসঙ্গিক Ramadan-only banner দেখানো যাবে
+না। - Reference অনুযায়ী cards, rounded panels, subtle gradients ও
+spacing।
+
+4.2 Prayer Times - পাঁচ ওয়াক্ত নামাজ: Fajr, Dhuhr, Asr, Maghrib, Isha। -
+Local date ও selected location অনুযায়ী prayer time। - Next prayer
+highlight এবং countdown। - Calculation method ও Asr method settings-এ
+পরিবর্তনযোগ্য হতে পারে। - Notification/reminder enable/disable। -
+Internet/API unavailable হলে cached data এবং স্পষ্ট last-updated state। -
+অনুমান করে prayer time দেখানো যাবে না।
+
+4.3 Daily Planner & Tasks - Day/date selector। - Daily task list এবং
+custom task add/edit/delete। - Task title, optional note, time এবং
+repeat option। - Complete/undo action। - Daily completion percentage ও
+progress bar। - User নিজের task তৈরি করতে পারবে। - Task category-তে
+প্রাসঙ্গিক Islamic daily routine/learning task রাখা যেতে পারে। - কোনো AI
+task generation থাকবে না।
+
+4.4 Quran - Surah list। - Surah number, Arabic name, transliteration এবং
+ayah count। - Surah reading view। - Arabic text readable
+typography-তে। - Translation থাকলে নির্ভরযোগ্য, attributed source ব্যবহার
+করতে হবে। - Bookmark / last-read position। - Search by Surah
+name/number। - Audio recitation যোগ করা হলে নির্ভরযোগ্য source এবং working
+playback লাগবে। - Quran text/translation কোনোভাবেই AI দিয়ে বানিয়ে বা
+অনুমান করে দেখানো যাবে না।
+
+4.5 Streak & Statistics - Consecutive active days। - Weekly activity
+calendar। - Completed tasks count। - Quran reading sessions / ayah
+progress, যদি tracking enabled থাকে। - Prayer check-ins, যদি user নিজে
+mark করে। - Learning/activity minutes কেবল বাস্তবে track হলে দেখাতে
+হবে। - Stats user data থেকে calculate হবে; hardcoded demo number নয়। -
+Missed day হলে streak logic consistent হতে হবে।
+
+4.6 Achievements & Badges - Combo milestones: 10, 20, 30, 50, 100। -
+Bronze, Silver, Gold medal tiers। - Hexagon, star, ribbon এবং approved
+badge visual language। - Badge detail-এ নাম, unlock condition, earned
+date ও progress। - Locked badge-এ remaining progress দেখানো। - একই
+milestone একাধিকবার duplicate award করা যাবে না। - Badge design
+reference-এর মতো colorful, dimensional, polished হবে।
+
+4.7 Profile - Profile photo/avatar। - Name এবং member-since date। -
+Activity summary। - Streak / milestone summary। - Personal
+preferences। - Language, location ও notification settings shortcut। -
+Account settings ও sign out।
+
+4.8 Authentication - Email/password sign up ও login। - Password reset। -
+User session secure handling। - Guest mode রাখা হলে local data ও account
+data-এর সীমাবদ্ধতা পরিষ্কার করতে হবে। - Login screen Reference Image E-এর
+minimalist white layout অনুসরণ করবে।
+
+4.9 Notifications - Prayer reminders। - User-created task reminders। -
+Optional Quran / daily routine reminder। - প্রতিটি notification category
+আলাদাভাবে on/off। - Permission না দিলে app crash বা blocked state হবে
+না।
+
+============================================================ 5. STRICTLY
+EXCLUDED FEATURES
+============================================================
+
+নিচের কোনো কিছু তৈরি বা UI-তে দেখানো যাবে না: - AI Assistant - AI
+Chatbot - AI Coach - AI-generated religious advice - AI-generated Quran
+text, Hadith, Dua বা Fatwa - Fitness / workout / exercise features -
+Body measurement, weight tracking বা health readiness metrics -
+অপ্রাসঙ্গিক social feed বা random community features - Fake live prayer
+times - Fake statistics, fake badges বা fake user activity - Reference-এ
+নেই এমন অপ্রয়োজনীয় dashboard sections
+
+============================================================ 6. VISUAL
+DESIGN RULES
+============================================================
+
+Reference images-কে primary visual source হিসেবে ধরতে হবে।
+
+-   Overall style: clean, premium, soft, modern mobile UI।
+-   White/off-white surfaces এবং reference-এ থাকা green, lime, warm
+    gold, orange ও purple accent প্রয়োজন অনুযায়ী ব্যবহার।
+-   এক screen-এ সব palette জোর করে মেশানো যাবে না; সংশ্লিষ্ট reference
+    screen-এর palette অনুসরণ করতে হবে।
+-   Large rounded cards, soft shadow, subtle border ও layered surfaces।
+-   Typography hierarchy reference-এর মতো: বড় heading, clear labels,
+    readable secondary text।
+-   Icon style consistent হতে হবে।
+-   Bottom navigation fixed ও touch-friendly।
+-   Mobile viewport-এ কোনো horizontal overflow থাকবে না।
+-   Screen-এর spacing, component size ও alignment reference-এর কাছাকাছি
+    রাখতে হবে।
+-   Decorative animation subtle হবে; content বা performance ব্যাহত করবে
+    না।
+-   Loading, empty, error এবং offline states-ও একই design language-এ
+    তৈরি হবে।
+
+কোনো reference image-এর exact asset/icon/font available না থাকলে
+কাছাকাছি মানের replacement ব্যবহার করা যাবে, কিন্তু layout বা visual
+identity বদলানো যাবে না। Reference image-কে দেখে নিজের মতো unrelated
+redesign করা যাবে না।
+
+============================================================ 7.
+TECHNICAL REQUIREMENTS FOR GOOGLE AI STUDIO
+============================================================
+
+Google AI Studio-কে নির্দেশ: - প্রথমে সব uploaded reference images inspect
+করো। - প্রতিটি image কোন screen/component-এর reference তা উপরের mapping
+অনুযায়ী বোঝো। - Coding শুরুর আগে screen-by-screen implementation plan তৈরি
+করো। - তারপর complete working app implement করো। - Project structure
+পরিষ্কার ও maintainable রাখো। - Reusable components ব্যবহার করো। -
+Responsive mobile-first layout তৈরি করো। - Backend/auth/database দরকার
+হলে Firebase ব্যবহার করা যেতে পারে; setup/config placeholder স্পষ্টভাবে
+চিহ্নিত করতে হবে। - Prayer times ও Quran data-এর জন্য নির্ভরযোগ্য external
+data source ব্যবহার করো। - API key বা secret frontend source code-এ
+hardcode করা যাবে না। - Loading/error/empty states implement করতে হবে। -
+সব navigation, buttons, forms, tabs, toggles ও interactions test করতে
+হবে। - শুধু screenshot-এর মতো static UI বানিয়ে থেমে যাওয়া যাবে না। - কোনো
+AI chatbot/assistant interface বা AI feature তৈরি করবে না।
+
+============================================================ 8. DATA &
+CONTENT INTEGRITY
+============================================================
+
+-   Prayer time location ও calculation method অনুযায়ী হবে।
+-   Quran Arabic text নির্ভরযোগ্য source থেকে আসবে।
+-   Translation-এর source/translator উল্লেখ করতে হবে।
+-   Demo user data স্পষ্টভাবে demo হিসেবে চিহ্নিত থাকবে।
+-   User-এর actual activity ছাড়া streak/statistics বাড়বে না।
+-   Badge unlock হবে নির্ধারিত condition পূরণ হলে।
+-   Offline অবস্থায় stale data থাকলে last updated status দেখাতে হবে।
+
+============================================================ 9. QUALITY
+ASSURANCE / ACCEPTANCE CRITERIA
+============================================================
+
+App গ্রহণযোগ্য হবে কেবল যদি: 1. এটি Fixness থেকে সম্পূর্ণ আলাদা project হয়।
+2. Uploaded reference images-এর সঙ্গে প্রতিটি সংশ্লিষ্ট screen-এর visual
+match যতটা সম্ভব কাছাকাছি হয়। 3. কোনো AI Assistant/Chatbot/Coach না থাকে।
+4. Prayer times, planner, Quran, profile, streak ও badges কাজ করে। 5.
+Navigation-এর সব tab সঠিক screen খুলে। 6. Add/Edit/Delete task কাজ করে।
+7. Task complete করলে progress update হয়। 8. Streak ও statistics actual
+data থেকে update হয়। 9. Badge condition পূরণ হলে badge unlock হয়। 10.
+Quran content নির্ভরযোগ্য source থেকে আসে। 11. Mobile screen-এ layout ভেঙে
+না যায়। 12. Buttons বা controls dead/inert না থাকে। 13. কোনো fake live
+data বা fake progress ব্যবহার না হয়। 14. Loading, error, empty ও offline
+state থাকে। 15. Final app-এ অপ্রাসঙ্গিক feature বা screen ঢোকানো না হয়।
+16. User-created data device-এর local storage-এ persist করে।
+17. App restart/refresh-এর পরও local data অক্ষত থাকে।
+18. Backup JSON file export করা যায়।
+19. Valid backup file থেকে data restore করা যায়।
+20. Invalid backup restore করলে existing data overwrite হয় না।
+21. Default build-এ user data কোনো cloud service-এ পাঠানো হয় না।
+
+============================================================ 10. FINAL
+BUILD INSTRUCTION
+============================================================
+
+সবচেয়ে গুরুত্বপূর্ণ নির্দেশনা:
+
+এই project একটি নতুন standalone Islamic daily companion app। এটি Fixness
+নয় এবং Fixness-এর কোনো feature বা branding ব্যবহার করবে না।
+
+আমি Google AI Studio-তে এই PRD-এর সঙ্গে আমার দেওয়া সব reference images
+আপলোড করব। Uploaded images-ই UI design-এর প্রধান source of truth। সেগুলোর
+layout, component arrangement, colors, typography, spacing, card style,
+icons, shadows, gradients এবং visual hierarchy যতটা সম্ভব হুবহু অনুসরণ করে
+implement করবে।
+
+কোনো AI Assistant, AI Chatbot, AI Coach বা AI feature যোগ করবে না। কোনো
+অপ্রাসঙ্গিক feature উদ্ভাবন করবে না। শুধু এই PRD-তে নির্ধারিত app scope এবং
+uploaded reference images-এ দেখানো relevant features implement করবে।
+
+প্রথমে design analysis, তারপর screen plan, তারপর complete functional app।
+Final output হবে polished, responsive, reliable এবং production-oriented।

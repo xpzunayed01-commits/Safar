@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#084B32" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Safar" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="shortcut icon" type="image/png" href="/pwa-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <!-- Preload Safar brand logos for instant 0ms rendering -->
+    <link rel="preload" as="image" href="/assets/aistudio/6f7fdfc9-b075-47cb-82d6-43431092bd3b_c44308e1.png" fetchpriority="high" />
+    <link rel="preload" as="image" href="/assets/aistudio/imgupscaler-enhanced__1_-Photoroom_04a70808.png" fetchpriority="high" />
+    <script>
+      (function() {
+        try {
+          var origFetch = window.fetch;
+          if (origFetch) {
+            var currentFetch = origFetch;
+            Object.defineProperty(window, 'fetch', {
+              configurable: true,
+              enumerable: true,
+              get: function() {
+                return currentFetch;
+              },
+              set: function(fn) {
+                currentFetch = fn;
+              }
+            });
+          }
+        } catch (e) {}
+
+        window.addEventListener('error', function(event) {
+          if (
+            event.filename &&
+            (event.filename.indexOf('chrome-extension://') !== -1 ||
+             event.filename.indexOf('moz-extension://') !== -1)
+          ) {
+            event.stopImmediatePropagation();
+            event.preventDefault();
+            return true;
+          }
+        }, true);
+      })();
+    </script>
+    <title>Safar — ইসলামিক দৈনিক সঙ্গী ও প্ল্যানার</title>
+    <meta name="description" content="নামাজের সময়সূচী, ৫ ওয়াক্ত আযান, পবিত্র কুরআন, দোয়া ও যিকির, দৈনিক আমল প্ল্যানার ও ব্যাকআপসহ একটি স্বতন্ত্র ইসলামিক অ্যাপ।" />
+    <meta property="og:title" content="Safar — ইসলামিক দৈনিক সঙ্গী ও প্ল্যানার" />
+    <meta property="og:description" content="নামাজের সময়সূচী, ৫ ওয়াক্ত আযান, পবিত্র কুরআন, দোয়া ও যিকির, দৈনিক আমল প্ল্যানার ও ব্যাকআপসহ একটি স্বতন্ত্র ইসলামিক অ্যাপ।" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/assets/index-CqwtL2MT.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-u-H0LInY.css">
+  <link rel="manifest" href="/manifest.webmanifest"></head>
+  <body class="bg-[#F6F8F5] text-[#141517] antialiased selection:bg-[#084B32]/15 selection:text-[#084B32]">
+    <div id="root"></div>
+  </body>
+</html>

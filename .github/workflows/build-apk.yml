@@ -1,0 +1,132 @@
+name: Build & Release Safar Android APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  release:
+    types: [published, created]
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publish as GitHub Release'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-android-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java JDK (17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Set up Node.js (20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: |
+          npm ci || npm install --legacy-peer-deps
+
+      - name: Build Web Application
+        run: |
+          npm run build
+
+      - name: Sync Capacitor Android Project
+        run: |
+          npx cap sync android
+
+      - name: Grant Execute Permission to Gradlew
+        run: |
+          chmod +x android/gradlew
+
+      - name: Build Android Release & Debug APK
+        working-directory: android
+        run: |
+          ./gradlew assembleRelease --no-daemon --stacktrace || ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Prepare APK Outputs
+        run: |
+          mkdir -p release-output
+          # Find generated release APK or debug APK
+          RELEASE_APK=$(find android/app/build/outputs/apk/release -name "*.apk" 2>/dev/null | head -n 1)
+          DEBUG_APK=$(find android/app/build/outputs/apk/debug -name "*.apk" 2>/dev/null | head -n 1)
+          
+          if [ -f "$RELEASE_APK" ]; then
+            cp "$RELEASE_APK" release-output/Safar.apk
+            cp "$RELEASE_APK" Safar.apk
+            echo "Found release APK: $RELEASE_APK"
+          elif [ -f "$DEBUG_APK" ]; then
+            cp "$DEBUG_APK" release-output/Safar.apk
+            cp "$DEBUG_APK" Safar.apk
+            echo "Fallback to debug APK: $DEBUG_APK"
+          else
+            echo "No APK found!" && exit 1
+          fi
+
+          if [ -f "$DEBUG_APK" ]; then
+            cp "$DEBUG_APK" release-output/Safar-debug.apk
+          fi
+
+      - name: Upload APK Artifact to GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: Safar-Android-APK
+          path: release-output/*.apk
+          retention-days: 30
+
+      - name: Upload APK to GitHub Release (If Tagged or Release Event)
+        if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-output/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or Update Rolling Latest Release (On Push to Main)
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_release == true)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: 'Safar Android v1.0.0 (Official Release)'
+          body: |
+            ### 🌟 Safar — ইসলামিক দৈনিক সঙ্গী ও প্ল্যানার (Android APK)
+            
+            আপনার ডিভাইসে সরাসরি ইনস্টল করার জন্য প্রস্তুতকৃত অফিসিয়াল অ্যান্ড্রয়েড APK ফাইল।
+            
+            #### 📱 যা যা অন্তর্ভুক্ত:
+            - **সম্পূর্ণ নেটিভ অ্যাপ ইন্টারফেস ও ফুলস্ক্রিন ভিউ**
+            - **৫ ওয়াক্ত মানবকণ্ঠের আযান ও অ্যালার্ম নোটিফিকেশন** (মক্কা, মদিনা, আল-আকসা ও শায়েখ মিশারি রশিদ)
+            - **১১৪টি সূরার অডিওসহ পবিত্র কুরআন** (স্বয়ংক্রিয় আয়াত হাইলাইট ও স্ক্রলিং)
+            - **১০,০০০+ ক্যাটাগরিভিত্তিক নির্ভরযোগ্য দোয়া ও তাসবীহ**
+            - **দৈনিক আমল প্ল্যানার ও পবিত্রতা ট্র্যাকার**
+            - **এসএসসি স্টাডি হাব ও পরীক্ষা কাউন্টডাউন**
+            - **১০০% অফলাইন সাপোর্ট ও লোকাল ডেটা প্রাইভেসি**
+            
+            #### 📥 ইনস্টলেশন নির্দেশিকা:
+            ১. নিচে দেওয়া `Safar.apk` ফাইলে ক্লিক করে ডাউনলোড করুন।
+            ২. ফোনে "Install from unknown sources" পারমিশন অন করে ইনস্টল সম্পন্ন করুন।
+          files: release-output/*.apk
+          draft: false
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
