@@ -50,11 +50,10 @@ jobs:
         run: |
           npm run build
 
-      - name: Initialize & Add Capacitor Android Platform
+      - name: Initialize & Force Recreate Android Platform
         run: |
-          npx cap add android || true
-          npx cap update android
-          npx cap sync android
+          rm -rf android
+          npx cap add android
 
       - name: Verify Android Directory & Gradlew
         run: |
@@ -62,7 +61,7 @@ jobs:
           if [ -f "android/gradlew" ]; then
             chmod +x android/gradlew
           else
-            echo "ERROR: android/gradlew still missing after cap sync!"
+            echo "ERROR: android/gradlew still missing!"
             exit 1
           fi
 
