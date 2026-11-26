@@ -5,10 +5,6 @@ on:
     branches:
       - main
       - master
-    tags:
-      - 'v*'
-  release:
-    types: [published, created]
   workflow_dispatch:
     inputs:
       publish_release:
@@ -19,6 +15,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-android-apk:
@@ -41,90 +41,119 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
         run: |
-          npm ci || npm install --legacy-peer-deps
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
       - name: Build Web Application
         run: |
           npm run build
 
-      - name: Initialize & Force Recreate Android Platform
+      - name: Setup Native Android Project
         run: |
           rm -rf android
           npx cap add android
+          npx cap sync android
+          node scripts/configure-android.mjs
+          chmod +x android/gradlew
 
-      - name: Verify Android Directory & Gradlew
-        run: |
-          ls -la android
-          if [ -f "android/gradlew" ]; then
-            chmod +x android/gradlew
-          else
-            echo "ERROR: android/gradlew still missing!"
-            exit 1
-          fi
-
-      - name: Build Android Release & Debug APK
+      - name: Build Signed Android APK
         run: |
           cd android
           ./gradlew assembleRelease --no-daemon --stacktrace || ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Prepare APK Outputs
+      - name: Prepare APK Output
         run: |
           mkdir -p release-output
-          RELEASE_APK=$(find android/app/build/outputs/apk/release -name "*.apk" 2>/dev/null | head -n 1)
+          RELEASE_APK=$(find android/app/build/outputs/apk/release -name "*.apk" ! -name "*unsigned*" 2>/dev/null | head -n 1)
+          ANY_RELEASE_APK=$(find android/app/build/outputs/apk/release -name "*.apk" 2>/dev/null | head -n 1)
           DEBUG_APK=$(find android/app/build/outputs/apk/debug -name "*.apk" 2>/dev/null | head -n 1)
-          
-          if [ -f "$RELEASE_APK" ]; then
+
+          if [ -n "$RELEASE_APK" ] && [ -f "$RELEASE_APK" ]; then
             cp "$RELEASE_APK" release-output/Safar.apk
-            cp "$RELEASE_APK" Safar.apk
-            echo "Found release APK: $RELEASE_APK"
-          elif [ -f "$DEBUG_APK" ]; then
+            echo "Selected signed release APK: $RELEASE_APK"
+          elif [ -n "$DEBUG_APK" ] && [ -f "$DEBUG_APK" ]; then
             cp "$DEBUG_APK" release-output/Safar.apk
-            cp "$DEBUG_APK" Safar.apk
-            echo "Fallback to debug APK: $DEBUG_APK"
+            echo "Selected debug APK: $DEBUG_APK"
+          elif [ -n "$ANY_RELEASE_APK" ] && [ -f "$ANY_RELEASE_APK" ]; then
+            cp "$ANY_RELEASE_APK" release-output/Safar.apk
+            echo "Fallback release APK: $ANY_RELEASE_APK"
           else
-            echo "No APK found!" && exit 1
+            echo "ERROR: No APK file generated!"
+            exit 1
           fi
 
-          if [ -f "$DEBUG_APK" ]; then
-            cp "$DEBUG_APK" release-output/Safar-debug.apk
-          fi
+          ls -lh release-output/Safar.apk
 
       - name: Upload APK Artifact to GitHub Actions
         uses: actions/upload-artifact@v4
         with:
           name: Safar-Android-APK
-          path: release-output/*.apk
+          path: release-output/Safar.apk
           retention-days: 30
 
-      - name: Create or Update GitHub Release via GitHub CLI
+      - name: Publish APK to GitHub Releases
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_release == true)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          if [ ! -s "release-output/Safar.apk" ]; then
+            echo "ERROR: release-output/Safar.apk is missing or empty!"
+            exit 1
+          fi
+
           TAG="v1.0.0"
           TITLE="Safar Android v1.0.0 (Official Release)"
-          BODY="### 🌟 Safar — ইসলামিক দৈনিক সঙ্গী ও প্ল্যানার (Android APK)
+          cat <<'EOF' > /tmp/release_notes.md
+          ### Safar — ইসলামিক দৈনিক সঙ্গী ও প্ল্যানার (Android APK)
 
-আপনার ডিভাইসে সরাসরি ইনস্টল করার জন্য প্রস্তুতকৃত অফিসিয়াল অ্যান্ড্রয়েড APK ফাইল।
+          আপনার অ্যান্ড্রয়েড ফোনে সরাসরি ইনস্টল করার জন্য অফিসিয়াল Safar অ্যাপ।
 
-#### 📱 যা যা অন্তর্ভুক্ত:
-- **সম্পূর্ণ নেটিভ অ্যাপ ইন্টারফেস ও ফুলস্ক্রিন ভিউ**
-- **৫ ওয়াক্ত মানবকণ্ঠের আযান ও অ্যালার্ম নোটিফিকেশন** (মক্কা, মদিনা, আল-আকসা ও শায়েখ মিশারি রশিদ)
-- **১১৪টি সূরার অডিওসহ পবিত্র কুরআন** (স্বয়ংক্রিয় আয়াত হাইলাইট ও স্ক্রলিং)
-- **১০,০০০+ ক্যাটাগরিভিত্তিক নির্ভরযোগ্য দোয়া ও তাসবীহ**
-- **দৈনিক আমল প্ল্যানার ও পবিত্রতা ট্র্যাকার**
-- **এসএসসি স্টাডি হাব ও পরীক্ষা কাউন্টডাউন**
-- **১০০% অফলাইন সাপোর্ট ও লোকাল ডেটা প্রাইভেسی**
+          #### যা যা থাকছে:
+          - সম্পূর্ণ ফুল-স্ক্রিন নেটিভ অ্যান্ড্রয়েড অ্যাপ অভিজ্ঞতা ও কাস্টম Safar আইকন
+          - ৫ ওয়াক্ত আসল মানবকণ্ঠের আযান ও অ্যালার্ম (মক্কা, মদিনা, আল-আকসা ও শায়েখ মিশারি রশিদ)
+          - ১১৪টি সূরার অডিওসহ পবিত্র কুরআন (আয়াত হাইলাইট ও স্বয়ংক্রিয় স্ক্রল)
+          - দোয়া ও যিকির, দৈনিক আমল প্ল্যানার, পবিত্রতা ট্র্যাকার ও এসএসসি স্টাডি হাব
+          - সম্পূর্ণ অফলাইন সাপোর্ট ও ডিভাইসে নিরাপদ লোকাল স্টোরেজ
 
-#### 📥 ইনস্টলেশন নির্দেশিকা:
-১. নিচে দেওয়া \`Safar.apk\` ফাইলে ক্লিক করে ডাউনলোড করুন।
-২. ফোনে \"Install from unknown sources\" পারমিশন অন করে ইনস্টল সম্পন্ন করুন।"
+          #### ডাউনলোড ও ইনস্টলেশন:
+          ১. নিচের Assets অংশ থেকে `Safar.apk` ডাউনলোড করুন।
+          ২. ফোনে ফাইলটি ওপেন করে ইনস্টল করুন।
+          EOF
+          sed -i 's/^          //' /tmp/release_notes.md
 
-          # Delete existing release & tag if they exist
-          gh release delete "$TAG" --yes --cleanup-tag || true
-          git push origin --delete "$TAG" || true
+          for attempt in 1 2 3; do
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              echo "Updating existing release $TAG (attempt $attempt)..."
+              if gh release upload "$TAG" release-output/Safar.apk --clobber && \
+                 gh release edit "$TAG" --title "$TITLE" --notes-file /tmp/release_notes.md --draft=false --latest; then
+                echo "Successfully updated release $TAG!"
+                exit 0
+              fi
+              echo "Update failed; cleaning up stale release/tag $TAG before retry..."
+              gh release delete "$TAG" --yes --cleanup-tag >/dev/null 2>&1 || true
+            else
+              echo "Creating new release $TAG (attempt $attempt)..."
+              # Clean up any orphaned draft releases or stale tag before creating fresh release
+              for draft_id in $(gh api "repos/${{ github.repository }}/releases" --jq ".[] | select(.tag_name == \"$TAG\" or .draft == true) | .id" 2>/dev/null || true); do
+                gh api -X DELETE "repos/${{ github.repository }}/releases/$draft_id" >/dev/null 2>&1 || true
+              done
+              git push origin --delete "$TAG" >/dev/null 2>&1 || true
+              sleep 2
+              if gh release create "$TAG" release-output/Safar.apk \
+                 --target "${{ github.sha }}" \
+                 --title "$TITLE" \
+                 --notes-file /tmp/release_notes.md \
+                 --latest; then
+                echo "Successfully created release $TAG!"
+                exit 0
+              fi
+            fi
+            echo "Attempt $attempt failed. Waiting 5s before retry..."
+            sleep 5
+          done
 
-          # Create new release with gh cli
-          gh release create "$TAG" release-output/Safar.apk release-output/Safar-debug.apk --title "$TITLE" --notes "$BODY"
+          echo "ERROR: Failed to publish GitHub Release after 3 attempts."
+          exit 1

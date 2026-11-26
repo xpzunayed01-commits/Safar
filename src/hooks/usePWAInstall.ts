@@ -12,8 +12,15 @@ export function usePWAInstall() {
   const [isAndroid, setIsAndroid] = useState(false);
 
   useEffect(() => {
-    // Detect standalone mode (already running as installed PWA or Capacitor WebView)
+    // Detect standalone mode (already running as installed PWA or Capacitor Native APK)
+    const cap = (
+      window as unknown as {
+        Capacitor?: { isNativePlatform?: () => boolean };
+      }
+    ).Capacitor;
+    const isCapacitorNative = Boolean(cap?.isNativePlatform?.());
     const isStandalone =
+      isCapacitorNative ||
       window.matchMedia('(display-mode: standalone)').matches ||
       (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
       document.referrer.includes('android-app://');
